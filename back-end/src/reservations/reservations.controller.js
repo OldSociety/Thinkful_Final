@@ -22,7 +22,6 @@ async function list(req, res, next) {
 
 async function create(req, res) {
   const { data = {} } = req.body
-  console.log(data)
   await reservationService.create(data)
   res.status(201).json({ data })
 }
@@ -38,7 +37,8 @@ const VALID_PROPERTIES = [
 
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body
-  
+
+  console.log(req.body)
   const invalidFields = Object.keys(data).filter(
     (field) => !VALID_PROPERTIES.includes(field)
   )
@@ -49,6 +49,35 @@ function hasOnlyValidProperties(req, res, next) {
       message: `Invalid field(s): ${invalidFields.join(', ')}`,
     })
   }
+  console.log(data)
+  if (
+    typeof data.people !== 'number' &&
+    typeof data.reservation_time !== 'time' &&
+    typeof data.reservation_date !== 'date'
+  ) {
+    res.status(400)
+  }
+  next()
+}
+
+function dateValidation(req, res, next) {
+  const { data = {} } = req.body
+  let date = data.reservation_date + 'T' + data.reservation_time
+
+  const d = new Date(date)
+  const currentDate = new Date().getTime()
+
+  if (d.getTime() <= currentDate) {
+    return next({
+      status: 400,
+      message: `"future".`,
+    })
+  } else if (d.getDay() === 2 && !d.getTime() <= currentDate) {
+    return next({
+      status: 400,
+      message: `"closed"`,
+    })
+  }
   next()
 }
 
@@ -57,6 +86,7 @@ module.exports = {
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,
+    dateValidation,
     asyncErrorBoundary(create),
   ],
 }

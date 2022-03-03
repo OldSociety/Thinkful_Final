@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-// import { API_BASE_URL } from '../../src/utils/api'
+import ErrorAlert from '../layout/ErrorAlert'
+import { API_BASE_URL, postReservation } from '../../src/utils/api'
 
 const Reservations = () => {
   const initialFormState = {
@@ -13,19 +14,12 @@ const Reservations = () => {
   }
 
   const [formData, setFormData] = useState({ ...initialFormState })
-  // const [fetchedData, updateFetchedData] = useState([])
-  // const { data } = fetchedData
+  const [fetchedData, updateFetchedData] = useState([])
+  const [newReservationError, setNewReservationError] = useState(null)
+  const { data } = fetchedData
 
-  // let api = `${API_BASE_URL}/reservations`
+  let api = `${API_BASE_URL}/reservations`
   const history = useHistory()
-  let DateError = null
-
-  // useEffect(() => {
-  //   ;(async function () {
-  //     let data = await fetch(api).then((res) => res.json())
-  //     updateFetchedData(data)
-  //   })()
-  // }, [api])
 
   const handleChange = ({ target }) => {
     setFormData({
@@ -35,44 +29,14 @@ const Reservations = () => {
     })
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    console.log('Submitted:', formData)
-
-    dateValidation()
-    //Must be in the future.Cannot be scheduled on a Tuesday.
-    if (!DateError) {
-      //Post data here
-
-      setFormData({ ...initialFormState })
-      history.push(`/dashboard?date=${formData.reservation_date}`)
-    }
-  }
-
-  const dateValidation = async () => {
-    let date = formData.reservation_date + 'T' + formData.reservation_time
-
-    const d = new Date(date)
-    const currentDate = new Date().getTime()
-
-    if (d.getDay() === 2 && d.getTime() <= currentDate) {
-      DateError = 'Invalid (tuesday & past)'
-      console.log(DateError)
-    } else if (d.getTime() <= currentDate) {
-      DateError = 'Invalid(past)'
-      console.log(DateError)
-    } else if (d.getDay() === 2 && !d.getTime() <= currentDate) {
-      DateError = 'Invalid(tuesday)'
-      console.log(DateError)
-      return (
-        <div className="alert alert-danger">
-          Please fix...
-          <ul>
-            <li>Cannot be scheduled on a Tuesday.</li>
-          </ul>
-        </div>
-      )
-    }
+    postReservation(formData)
+      .then(() => {
+        setFormData({ ...initialFormState })
+        history.goBack()
+      })
+      .catch((error) => setNewReservationError(error))
   }
 
   const handleCancel = (event) => {
@@ -85,11 +49,12 @@ const Reservations = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <ErrorAlert error={newReservationError} />
       <div className="container">
         <div className="row">
           <label htmlFor="first_name">
             First Name:
-            <br/>
+            <br />
             <input
               id="first_name"
               type="text"
@@ -102,10 +67,28 @@ const Reservations = () => {
 
           <br />
         </div>
+
+        <div className="row">
+          <label htmlFor="last_name">
+            Last Name:
+            <br />
+            <input
+              id="last_name"
+              type="text"
+              name="last_name"
+              onChange={handleChange}
+              value={formData.last_name}
+              //   required
+            />
+          </label>
+
+          <br />
+        </div>
+
         <div className="row">
           <label htmlFor="mobile_number">
             Phone Number:
-            <br/>
+            <br />
             <input
               id="mobile_number"
               type="text"
@@ -120,7 +103,8 @@ const Reservations = () => {
         </div>
         <div className="row">
           <label htmlFor="reservation_date">
-            <br/>
+            Date of Reservation:
+            <br />
             <input
               id="reservation_date"
               type="date"
@@ -135,47 +119,32 @@ const Reservations = () => {
         </div>
 
         <div className="row">
-          <label htmlFor="last_name">
-            Last Name:
-            <br/>
-            <input
-              id="last_name"
-              type="text"
-              name="last_name"
-              onChange={handleChange}
-              value={formData.last_name}
-              //   required
-            />
-          </label>
-
-          <br />
-        </div>
-        <div className="row">
-          <label htmlFor="people">
-            Number of People:
-            <br/>
-            <input
-              id="people"
-              type="text"
-              name="people"
-              onChange={handleChange}
-              value={formData.people}
-              //   required
-            />
-          </label>
-
-          <br />
-        </div>
-        <div className="row">
           <label htmlFor="reservation_time">
             Time of Reservation:
-            <br/>
+            <br />
             <input
               id="reservation_time"
               type="text"
               name="reservation_time"
               onChange={handleChange}
               value={formData.reservation_time}
+              //   required
+            />
+          </label>
+
+          <br />
+        </div>
+
+        <div className="row">
+          <label htmlFor="people">
+            Number of People:
+            <br />
+            <input
+              id="people"
+              type="text"
+              name="people"
+              onChange={handleChange}
+              value={formData.people}
               //   required
             />
           </label>

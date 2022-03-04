@@ -56,9 +56,6 @@ function dateValidation(req, res, next) {
   const { data = {} } = req.body
   let date = data.reservation_date + 'T' + data.reservation_time
   let time = data.reservation_time.replace(':','')
-  let hours = data.reservation_time.substring(0, 2)
-  let mins = data.reservation_time.substring(3,5)
-  console.log(time)
   const d = new Date(date)
   const currentDate = new Date().getTime()
 

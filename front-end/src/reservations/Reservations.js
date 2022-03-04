@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ErrorAlert from '../layout/ErrorAlert'
-import { API_BASE_URL, postReservation } from '../../src/utils/api'
+import { postReservation } from '../../src/utils/api'
 
 const Reservations = () => {
   const initialFormState = {
@@ -14,11 +14,8 @@ const Reservations = () => {
   }
 
   const [formData, setFormData] = useState({ ...initialFormState })
-  const [fetchedData, updateFetchedData] = useState([])
   const [newReservationError, setNewReservationError] = useState(null)
-  const { data } = fetchedData
 
-  let api = `${API_BASE_URL}/reservations`
   const history = useHistory()
 
   const handleChange = ({ target }) => {
@@ -37,6 +34,7 @@ const Reservations = () => {
         history.goBack()
       })
       .catch((error) => setNewReservationError(error))
+    console.log(formData.reservation_time)
   }
 
   const handleCancel = (event) => {
@@ -124,7 +122,7 @@ const Reservations = () => {
             <br />
             <input
               id="reservation_time"
-              type="text"
+              type="time"
               name="reservation_time"
               onChange={handleChange}
               value={formData.reservation_time}

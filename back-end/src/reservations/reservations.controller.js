@@ -38,7 +38,6 @@ const VALID_PROPERTIES = [
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body
 
-  console.log(req.body)
   const invalidFields = Object.keys(data).filter(
     (field) => !VALID_PROPERTIES.includes(field)
   )
@@ -49,21 +48,17 @@ function hasOnlyValidProperties(req, res, next) {
       message: `Invalid field(s): ${invalidFields.join(', ')}`,
     })
   }
-  console.log(data)
-  if (
-    typeof data.people !== 'number' &&
-    typeof data.reservation_time !== 'time' &&
-    typeof data.reservation_date !== 'date'
-  ) {
-    res.status(400)
-  }
+  console.log(typeof data.people)
   next()
 }
 
 function dateValidation(req, res, next) {
   const { data = {} } = req.body
   let date = data.reservation_date + 'T' + data.reservation_time
-
+  let time = data.reservation_time.replace(':','')
+  let hours = data.reservation_time.substring(0, 2)
+  let mins = data.reservation_time.substring(3,5)
+  console.log(time)
   const d = new Date(date)
   const currentDate = new Date().getTime()
 
@@ -76,6 +71,11 @@ function dateValidation(req, res, next) {
     return next({
       status: 400,
       message: `"closed"`,
+    })
+  } else if ( time < 1030 || time > 2130) {
+    return next({
+      status: 400,
+      message: `"closed".`,
     })
   }
   next()

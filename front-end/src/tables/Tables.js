@@ -46,18 +46,32 @@ const Tables = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        className="table_name"
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="text"
-        className="capacity"
-        onChange={handleChange}
-        required
-      />
+      <div className="row">
+        <label htmlFor="table_name">
+          Table:
+          <input
+            type="text"
+            className="table_name"
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+
+      <br />
+      <div className="row">
+        <label htmlFor="capacity">
+          Table:
+          <input
+            type="text"
+            className="capacity"
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      
+      <br />
       <button type="button" onClick={handleCancel}>
         Cancel
       </button>

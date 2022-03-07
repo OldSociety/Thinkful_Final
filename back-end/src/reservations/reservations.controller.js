@@ -5,6 +5,7 @@ const reservationService = require('./reservations.service')
 const asyncErrorBoundary = require('../errors/asyncErrorBoundary')
 const hasProperties = require('../errors/hasProperties')
 
+// ensures required properities on submit
 const hasRequiredProperties = hasProperties(
   'first_name',
   'last_name',
@@ -25,6 +26,7 @@ async function create(req, res) {
   await reservationService.create(data)
   res.status(201).json({ data })
 }
+
 
 const VALID_PROPERTIES = [
   'first_name',
@@ -59,16 +61,21 @@ function dateValidation(req, res, next) {
   const d = new Date(date)
   const currentDate = new Date().getTime()
 
+  //cannot set before current date
   if (d.getTime() <= currentDate) {
     return next({
       status: 400,
       message: `"future".`,
     })
-  } else if (d.getDay() === 2 && !d.getTime() <= currentDate) {
+    //closed on tuesdays
+  } else if (d.getDay() === 2 
+  //&& !d.getTime() <= currentDate
+  ) {
     return next({
       status: 400,
       message: `"closed"`,
     })
+    //story is closed before 1030 am and after 930pm
   } else if ( time < 1030 || time > 2130) {
     return next({
       status: 400,

@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useEffect, useState } from 'react'
-import { listReservations } from '../utils/api'
+import { listReservations, listTables } from '../utils/api'
 import ErrorAlert from '../layout/ErrorAlert'
 import { previous, today, next } from '../utils/date-time'
 // import { abort } from 'process'
@@ -15,6 +15,8 @@ function Dashboard({ date }) {
   const [reservations, setReservations] = useState([])
   const [reservationsError, setReservationsError] = useState(null)
   const [currentDate, setCurrentDate] = useState(date)
+  const [displayTables, setDisplayTables] = useState(false)
+  const [reservationId, setReservationId] = useState()
 
   useEffect(() => {
     setReservationsError(null)
@@ -45,6 +47,58 @@ function Dashboard({ date }) {
     }
   }
 
+  const handleSeat = async (event) => {
+    event.preventDefault()
+    setDisplayTables(!displayTables)
+
+    async function loadTable() {
+      const abortController = new AbortController()
+      try {
+        const data = await listTables(reservationId, abortController.signal)
+        setReservationId(data)
+      } catch (error) {
+        setReservationsError(error)
+      }
+      return () => abortController.abort()
+    }
+    loadTable()
+  }
+
+  if (displayTables) {
+    return (
+      <main>
+        <div className="d-md-flex mb-3">
+          <h4 className="mb-0">Available Tables for {currentDate}</h4>
+        </div>
+        <ErrorAlert error={reservationsError} />
+        <div className="table-list">
+          <table>
+            <thead>
+              <tr>
+                <th>Table Number</th>
+                <th>Occupied</th>
+                <th>Type</th>
+                <th>Capacity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reservations.map(
+                ({ table_name, capacity, type, occupied }, index) => (
+                  <tr key={index}>
+                    <td>{table_name}</td>
+                    <td>{capacity}</td>
+                    <td>{type}</td>
+                    <td>{occupied}</td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+          <button onClick={handleSeat}>Cancel</button>
+        </div>
+      </main>
+    )
+  }
   return (
     <main>
       <h1>Dashboard</h1>
@@ -52,7 +106,7 @@ function Dashboard({ date }) {
         <h4 className="mb-0">Reservations for {currentDate}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      <div className="recipe-list">
+      <div className="reservation-list">
         <table>
           <thead>
             <tr>
@@ -66,15 +120,17 @@ function Dashboard({ date }) {
           </thead>
           <tbody>
             {reservations.map(
-              ({
-                first_name,
-                last_name,
-                mobile_number,
-                reservation_date,
-                reservation_time,
-                people,
-                index,
-              }) => (
+              (
+                {
+                  first_name,
+                  last_name,
+                  mobile_number,
+                  reservation_date,
+                  reservation_time,
+                  people,
+                },
+                index
+              ) => (
                 <tr key={index}>
                   <td>{first_name}</td>
                   <td>{last_name}</td>
@@ -82,6 +138,7 @@ function Dashboard({ date }) {
                   <td>{reservation_date}</td>
                   <td>{reservation_time}</td>
                   <td>{people}</td>
+                  <button onClick={handleSeat}>Seat</button>
                 </tr>
               )
             )}

@@ -1,17 +1,13 @@
 const knex = require('../db/connection')
 const tableName = 'tables'
 
-function list(date) {
-    if (date) {
+function list(id) {
+    if (id) {
       return knex(tableName)
       .select('*')
-      .where({ reservation_date: date })
-      .orderBy('reservation_time')
-    }
-    return knex(tableName) 
-      .select('*')
-      .orderBy('reservation_time')
-  }
+      .where({ reservation_id: id })
+      .orderBy('table_name')
+    }}
   
 
   module.exports = {

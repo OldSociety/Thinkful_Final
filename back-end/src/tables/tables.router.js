@@ -4,13 +4,15 @@
  * @type {Router}
  */
 
-const router = require("express").Router({mergeParams: true});
-const controller = require("./tables.controller");
-const methodNotAllowed = require("../errors/methodNotAllowed")
-const cors = require("cors")
+const router = require('express').Router()
+const controller = require('./tables.controller')
+const methodNotAllowed = require('../errors/methodNotAllowed')
+const cors = require('cors')
 
-router.use(cors());
+router.use(cors())
 
-router.route("/").get(controller.list).all(methodNotAllowed);
+router.route('/:table_id/seat').post(controller.create).all(methodNotAllowed)
 
-module.exports = router;
+router.route('/').get(controller.list).all(methodNotAllowed)
+
+module.exports = router

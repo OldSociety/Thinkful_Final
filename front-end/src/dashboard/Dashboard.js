@@ -1,9 +1,9 @@
 /* eslint-disable array-callback-return */
 import React, { useEffect, useState } from 'react'
-import { listReservations, listTables } from '../utils/api'
+import { listReservations } from '../utils/api'
 import ErrorAlert from '../layout/ErrorAlert'
 import { previous, today, next } from '../utils/date-time'
-import Seat from '../tables/Seat'
+import { API_BASE_URL } from '../utils/api'
 
 /**
  * Defines the dashboard page.
@@ -15,9 +15,7 @@ function Dashboard({ date }) {
   const [reservations, setReservations] = useState([])
   const [reservationsError, setReservationsError] = useState(null)
   const [currentDate, setCurrentDate] = useState(date)
-  const [displayTables, setDisplayTables] = useState(false)
-  const [tables, setTables] = useState()
-  const { reservation_id } = reservations
+  const [tables, setTables] = ([])
 
   useEffect(() => {
     setReservationsError(null)
@@ -26,6 +24,10 @@ function Dashboard({ date }) {
       try {
         const data = await listReservations(currentDate, abortController.signal)
         setReservations(data)
+        // let tableData = await fetch(`${API_BASE_URL}/tables`).then((res) =>
+        //   res.json()
+        // )
+        // setTables(tableData)
       } catch (error) {
         setReservationsError(error)
       }
@@ -48,30 +50,6 @@ function Dashboard({ date }) {
     }
   }
 
-  const handleSeat = async (event) => {
-    event.preventDefault()
-    setDisplayTables(!displayTables)
-
-    async function loadTable() {
-      const abortController = new AbortController()
-      try {
-        const data = await listTables(reservation_id, abortController.signal)
-        setTables(data)
-      } catch (error) {
-        setReservationsError(error)
-      }
-      return () => abortController.abort()
-    }
-    loadTable()
-  }
-
-  if (displayTables) {
-    <Seat
-    tables={tables}
-      currentDate={currentDate}
-      reservations={reservations}
-    />
-  }
   return (
     <main>
       <h1>Dashboard</h1>
@@ -95,6 +73,7 @@ function Dashboard({ date }) {
             {reservations.map(
               (
                 {
+                  reservation_id,
                   first_name,
                   last_name,
                   mobile_number,
@@ -113,7 +92,9 @@ function Dashboard({ date }) {
                     <td>{reservation_time}</td>
                     <td>{people}</td>
                   </tr>
-                  <button onClick={handleSeat}>Seat</button>
+                  <a href={`/reservations/${reservation_id}/seat`}>
+                    <button>Seat</button>
+                  </a>
                 </>
               )
             )}
@@ -131,6 +112,10 @@ function Dashboard({ date }) {
       <button name="next" type="button" onClick={clickHandler}>
         Next
       </button>
+      <div className="row">
+        Tables Available
+        {/* {reservations.map(<tr></tr>)} */}
+      </div>
     </main>
   )
 }

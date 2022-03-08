@@ -9,6 +9,7 @@ const morgan = require("morgan")
 const errorHandler = require("./errors/errorHandler");
 const notFound = require("./errors/notFound");
 const reservationsRouter = require("./reservations/reservations.router");
+const tablesRouter = require("./tables/tables.router");
 
 const app = express();
 
@@ -19,9 +20,8 @@ app.use(morgan("dev"))
 
 //Routers
 app.use("/reservations", reservationsRouter);
-app.use("/tables", reservationsRouter);
-app.use("/search", reservationsRouter);
-app.use("/dashboard", reservationsRouter);
+app.use("/tables", tablesRouter);
+// app.use("/search", searchRouter);
 
 //Error handling
 app.use(notFound);

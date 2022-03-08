@@ -27,6 +27,9 @@ async function create(req, res) {
   res.status(201).json({ data })
 }
 
+async function read(req, res, next) {
+  res.json({ data: res.locals.movie });
+}
 
 const VALID_PROPERTIES = [
   'first_name',
@@ -55,15 +58,15 @@ function hasOnlyValidProperties(req, res, next) {
 }
 
 async function readTables(req, res, next) {
-  const { id } = req.params;
-  const data = await reservationService.readTables(id);
-  res.json({ data });
+  const { id } = req.params
+  const data = await reservationService.readTables(id)
+  res.json({ data })
 }
 
 function dateValidation(req, res, next) {
   const { data = {} } = req.body
   let date = data.reservation_date + 'T' + data.reservation_time
-  let time = data.reservation_time.replace(':','')
+  let time = data.reservation_time.replace(':', '')
   const d = new Date(date)
   const currentDate = new Date().getTime()
 
@@ -74,15 +77,16 @@ function dateValidation(req, res, next) {
       message: `"future".`,
     })
     //closed on tuesdays
-  } else if (d.getDay() === 2 
-  //&& !d.getTime() <= currentDate
+  } else if (
+    d.getDay() === 2
+    //&& !d.getTime() <= currentDate
   ) {
     return next({
       status: 400,
       message: `"closed"`,
     })
     //story is closed before 1030 am and after 930pm
-  } else if ( time < 1030 || time > 2130) {
+  } else if (time < 1030 || time > 2130) {
     return next({
       status: 400,
       message: `"closed".`,
@@ -93,7 +97,7 @@ function dateValidation(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  readTables: asyncErrorBoundary(readTables),
+  read: asyncErrorBoundary(read),
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,

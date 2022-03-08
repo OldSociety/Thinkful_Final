@@ -1,8 +1,28 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { API_BASE_URL } from '../utils/api'
 
-const Seat = ({ tables, currentDate, reservations }) => {
+const Seat = () => {
   const history = useHistory
+  const [status, setStatus] = useState(false)
+  const [fetchedData, updateFetchedData] = useState([])
+
+  let api = `${API_BASE_URL}/tables`
+
+  useEffect(() => {
+    ;(async function () {
+      const abortController = new AbortController()
+      try {
+        let data = await fetch(api).then((res) => res.json())
+        updateFetchedData(data)
+      } catch (error) {
+        // setReservationsError(error)
+      }
+      return () => abortController.abort()
+    })()
+  }, [api])
+
+  console.log('fetched Data', Object.values(fetchedData))
 
   const handleCancel = (event) => {
     event.preventDefault()
@@ -11,10 +31,19 @@ const Seat = ({ tables, currentDate, reservations }) => {
     history.goBack()
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    console.log('submitted')
+  }
+
+  const handleChange = () => {
+    setStatus(!status)
+  }
+
   return (
-    <main>
+    <form onSubmit={handleSubmit}>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Available Tables for {currentDate}</h4>
+        <h4 className="mb-0">Available Tables</h4>
       </div>
       {/* <ErrorAlert error={TablesError} /> */}
       <div className="table-list">
@@ -28,21 +57,53 @@ const Seat = ({ tables, currentDate, reservations }) => {
             </tr>
           </thead>
           <tbody>
-            {reservations.map(
-              ({ table_name, capacity, type, occupied }, index) => (
-                <tr key={index}>
-                  <td>{table_name}</td>
-                  <td>{capacity}</td>
-                  <td>{type}</td>
-                  <td>{occupied}</td>
-                </tr>
-              )
-            )}
+            <div className="container p-3">
+              <div className="row">
+                <label htmlFor="table_name">
+                  Table:
+                  <br />
+                  <select
+                    type="text"
+                    className="table_name"
+                    onChange={handleChange}
+                    value={fetchedData.status}
+                    required
+                  >
+                    <option value="1">Bar 1</option>
+                    <option value="2">Bar 2</option>
+                    <option value="3">Table 1</option>
+                    <option value="4">Table 2</option>
+                  </select>
+                </label>
+              </div>
+
+              <br />
+              <div className="row">
+                <label htmlFor="capacity">
+                  Capacity:
+                  <br />
+                  <input
+                    type="text"
+                    className="capacity"
+                    onChange={handleChange}
+                    value={fetchedData.capacity}
+                    required
+                  />
+                </label>
+              </div>
+
+              <br />
+            </div>
           </tbody>
         </table>
-        <button onClick={handleCancel}>Cancel</button>
+        <button className="m-1" type="button" onClick={handleCancel}>
+          Cancel
+        </button>
+        <button className="m-1" type="submit">
+          Submit
+        </button>
       </div>
-    </main>
+    </form>
   )
 }
 

@@ -1,7 +1,7 @@
 /**
  * List handler for reservation resources
  */
-const reservationService = require('./tables.service')
+const tableService = require('./tables.service')
 const asyncErrorBoundary = require('../errors/asyncErrorBoundary')
 const hasProperties = require('../errors/hasProperties')
 
@@ -13,15 +13,14 @@ const hasRequiredProperties = hasProperties(
   'status'
 )
 
-async function list(req, res, next) {
-  const { date } = req.query
-  const data = await reservationService.list(date)
-  res.status(200).json({ data })
+async function list(req, res){
+  const data = await tableService.list()  
+  res.json({data})
 }
 
 async function create(req, res) {
   const { data = {} } = req.body
-  await reservationService.create(data)
+  await tableService.create(data)
   res.status(201).json({ data })
 }
 

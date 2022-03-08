@@ -11,11 +11,11 @@ const cors = require('cors')
 
 router.use(cors())
 
-router.route('/:reservationId/seat').get(controller.readTables)
+router.route('/:reservation_Id').get(controller.read).all(methodNotAllowed)
 
 router
   .route('/')
-  .get(controller.list)
+  .get(cors(), controller.list)
   .post(controller.create)
   .all(methodNotAllowed)
 

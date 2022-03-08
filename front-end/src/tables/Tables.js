@@ -11,7 +11,7 @@ const Tables = () => {
 
   const history = useHistory
   const [formData, setFormData] = useState({ ...initialFormState })
-  const [newTableError, setNewTableError] = useState(null)
+  // const [newTableError, setNewTableError] = useState(null)
 
   const handleChange = ({ target }) => {
     setFormData({
@@ -21,6 +21,7 @@ const Tables = () => {
     })
   }
 
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     postTables(formData)
@@ -28,7 +29,7 @@ const Tables = () => {
         setFormData({ ...initialFormState })
         history.goBack()
       })
-      .catch((error) => setNewTableError(error))
+      .catch((error) => (error))
     console.log(formData.reservation_time)
   }
 

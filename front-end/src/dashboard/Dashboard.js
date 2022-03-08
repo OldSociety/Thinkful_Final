@@ -4,7 +4,6 @@ import { listReservations, listTables } from '../utils/api'
 import ErrorAlert from '../layout/ErrorAlert'
 import { previous, today, next } from '../utils/date-time'
 import Seat from '../tables/Seat'
-// import { abort } from 'process'
 
 /**
  * Defines the dashboard page.
@@ -17,7 +16,8 @@ function Dashboard({ date }) {
   const [reservationsError, setReservationsError] = useState(null)
   const [currentDate, setCurrentDate] = useState(date)
   const [displayTables, setDisplayTables] = useState(false)
-  const [reservationId, setReservationId] = useState()
+  const [tables, setTables] = useState()
+  const { reservation_id } = reservations
 
   useEffect(() => {
     setReservationsError(null)
@@ -55,8 +55,8 @@ function Dashboard({ date }) {
     async function loadTable() {
       const abortController = new AbortController()
       try {
-        const data = await listTables(reservationId, abortController.signal)
-        setReservationId(data)
+        const data = await listTables(reservation_id, abortController.signal)
+        setTables(data)
       } catch (error) {
         setReservationsError(error)
       }
@@ -66,7 +66,11 @@ function Dashboard({ date }) {
   }
 
   if (displayTables) {
-    <Seat reservationId={reservationId} currentDate={currentDate} reservations={reservations} />
+    <Seat
+    tables={tables}
+      currentDate={currentDate}
+      reservations={reservations}
+    />
   }
   return (
     <main>
@@ -100,15 +104,17 @@ function Dashboard({ date }) {
                 },
                 index
               ) => (
-                <tr key={index}>
-                  <td>{first_name}</td>
-                  <td>{last_name}</td>
-                  <td>{mobile_number}</td>
-                  <td>{reservation_date}</td>
-                  <td>{reservation_time}</td>
-                  <td>{people}</td>
+                <>
+                  <tr key={index}>
+                    <td>{first_name}</td>
+                    <td>{last_name}</td>
+                    <td>{mobile_number}</td>
+                    <td>{reservation_date}</td>
+                    <td>{reservation_time}</td>
+                    <td>{people}</td>
+                  </tr>
                   <button onClick={handleSeat}>Seat</button>
-                </tr>
+                </>
               )
             )}
           </tbody>

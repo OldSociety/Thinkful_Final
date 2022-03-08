@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-const Seat = ({ reservationId, currentDate, reservations }) => {
+const Seat = ({ tables, currentDate, reservations }) => {
   const history = useHistory
 
   const handleCancel = (event) => {

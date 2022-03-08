@@ -55,8 +55,8 @@ function hasOnlyValidProperties(req, res, next) {
 }
 
 async function readTables(req, res, next) {
-  const { reservationId } = req.params;
-  const data = await reservationService.readTables(reservationId);
+  const { id } = req.params;
+  const data = await reservationService.readTables(id);
   res.json({ data });
 }
 

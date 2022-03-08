@@ -15,7 +15,7 @@ function list(date) {
 
 function readTables(reservationId) {
   return knex("reservations as r")
-  .join("tables as t", "rt.reservation_id", "r.reservation_id")
+  .join("tables as t", "t.reservation_id", "r.reservation_id")
   .select("t.*")
   .where({"r.reservation_id": reservationId})
 }
@@ -30,4 +30,5 @@ function create(reservation) {
 module.exports = {
   list,
   create,
+  readTables
 }

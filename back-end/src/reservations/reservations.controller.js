@@ -5,6 +5,22 @@ const reservationService = require('./reservations.service')
 const asyncErrorBoundary = require('../errors/asyncErrorBoundary')
 const hasProperties = require('../errors/hasProperties')
 
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params
+  console.log(reservation_id)
+  const reservation = await reservationService.read(reservation_id)
+  console.log(reservation)
+  if (reservation) {
+    res.locals.reservation = reservation
+    console.log('error here')
+    return next()
+  }
+  return next({
+    status: 404,
+    message: `Reservation cannot be found.`,
+  })
+}
+
 // ensures required properities on submit
 const hasRequiredProperties = hasProperties(
   'first_name',
@@ -28,7 +44,7 @@ async function create(req, res) {
 }
 
 async function read(req, res, next) {
-  res.json({ data: res.locals.movie });
+  res.json({ data: res.locals.reservation })
 }
 
 const VALID_PROPERTIES = [
@@ -55,12 +71,6 @@ function hasOnlyValidProperties(req, res, next) {
   }
   console.log(typeof data.people)
   next()
-}
-
-async function readTables(req, res, next) {
-  const { id } = req.params
-  const data = await reservationService.readTables(id)
-  res.json({ data })
 }
 
 function dateValidation(req, res, next) {
@@ -97,7 +107,7 @@ function dateValidation(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  read: asyncErrorBoundary(read),
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,

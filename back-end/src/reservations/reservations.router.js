@@ -11,7 +11,7 @@ const cors = require('cors')
 
 router.use(cors())
 
-router.route('/:reservation_Id').get(controller.read).all(methodNotAllowed)
+router.route('/:reservation_id').get(controller.read).all(methodNotAllowed)
 
 router
   .route('/')

@@ -11,7 +11,7 @@ const cors = require('cors')
 
 router.use(cors())
 
-router.route('/:table_id/seat').post(controller.create).all(methodNotAllowed)
+router.route('/:table_id/seat').put(controller.update).all(methodNotAllowed)
 
 router.route('/').get(controller.list).all(methodNotAllowed)
 

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { listReservations, listTables } from '../utils/api'
 import ErrorAlert from '../layout/ErrorAlert'
 import { previous, today, next } from '../utils/date-time'
+import Seat from '../tables/Seat'
 // import { abort } from 'process'
 
 /**
@@ -65,39 +66,7 @@ function Dashboard({ date }) {
   }
 
   if (displayTables) {
-    return (
-      <main>
-        <div className="d-md-flex mb-3">
-          <h4 className="mb-0">Available Tables for {currentDate}</h4>
-        </div>
-        <ErrorAlert error={reservationsError} />
-        <div className="table-list">
-          <table>
-            <thead>
-              <tr>
-                <th>Table Number</th>
-                <th>Occupied</th>
-                <th>Type</th>
-                <th>Capacity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.map(
-                ({ table_name, capacity, type, occupied }, index) => (
-                  <tr key={index}>
-                    <td>{table_name}</td>
-                    <td>{capacity}</td>
-                    <td>{type}</td>
-                    <td>{occupied}</td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-          <button onClick={handleSeat}>Cancel</button>
-        </div>
-      </main>
-    )
+    <Seat reservationId={reservationId} currentDate={currentDate} reservations={reservations} />
   }
   return (
     <main>

@@ -11,6 +11,8 @@ const cors = require('cors')
 
 router.use(cors())
 
+router.route('/:reservationId/seat').get(controller.readTables)
+
 router
   .route('/')
   .get(controller.list)

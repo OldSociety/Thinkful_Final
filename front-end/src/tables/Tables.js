@@ -1,16 +1,12 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import ErrorAlert from '../layout/ErrorAlert'
+// import ErrorAlert from '../layout/ErrorAlert'
 import { postTables } from '../utils/api'
 
 const Tables = () => {
   const initialFormState = {
-    first_name: '',
-    last_name: '',
-    mobile_number: '',
-    reservation_date: '',
-    reservation_time: '',
-    people: '',
+    table_id: '',
+    capacity: ''
   }
 
   const history = useHistory
@@ -46,37 +42,49 @@ const Tables = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <div className="container p-3">
       <div className="row">
         <label htmlFor="table_name">
           Table:
-          <input
+          <br/>
+          <select
             type="text"
             className="table_name"
             onChange={handleChange}
+            value={formData.table_id}
             required
-          />
+          >
+          <option value="1">Bar 1</option>
+          <option value="2">Bar 2</option>
+          <option value="3">Table 1</option>
+          <option value="4">Table 2</option>
+          </select>
         </label>
       </div>
 
       <br />
       <div className="row">
         <label htmlFor="capacity">
-          Table:
+          Capacity:
+          <br/>
           <input
             type="text"
             className="capacity"
             onChange={handleChange}
+            value={formData.capacity}
             required
           />
         </label>
       </div>
       
       <br />
-      <button type="button" onClick={handleCancel}>
+      <button className="m-1" type="button" onClick={handleCancel}>
         Cancel
       </button>
-      <button type="submit">Submit</button>
+      <button className="m-1" type="submit">Submit</button>
+      </div>
     </form>
+    
   )
 }
 

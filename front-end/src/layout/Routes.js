@@ -7,6 +7,7 @@ import { today } from '../utils/date-time'
 import Reservations from '../reservations/Reservations'
 import useQuery from '../utils/useQuery'
 import Tables from '../tables/Tables'
+import Seat from '../tables/Seat'
 
 /**
  * Defines all the routes for the application.
@@ -18,6 +19,7 @@ import Tables from '../tables/Tables'
 function Routes() {
   const query = useQuery();
   const date = query.get("date")
+  const reservation_id = query.get("reservation_id")
 
   return (
     <Switch>
@@ -30,9 +32,9 @@ function Routes() {
       <Route path="/reservations/new">
         <Reservations />
       </Route>
-      {/* <Route path={`/reservations/${reservation_id}/seat`}>
+      <Route path={`/reservations/${reservation_id}/seat`}>
         <Seat />
-      </Route> */}
+      </Route>
       <Route path="/tables/new">
         <Tables />
       </Route>

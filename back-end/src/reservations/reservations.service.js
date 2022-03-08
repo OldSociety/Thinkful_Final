@@ -13,6 +13,13 @@ function list(date) {
     .orderBy('reservation_time')
 }
 
+function readTables(reservationId) {
+  return knex("reservations as r")
+  .join("tables as t", "rt.reservation_id", "r.reservation_id")
+  .select("t.*")
+  .where({"r.reservation_id": reservationId})
+}
+
 function create(reservation) {
   return knex(tableName)
     .insert(reservation)

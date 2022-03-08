@@ -54,6 +54,12 @@ function hasOnlyValidProperties(req, res, next) {
   next()
 }
 
+async function readTables(req, res, next) {
+  const { reservationId } = req.params;
+  const data = await reservationService.readTables(reservationId);
+  res.json({ data });
+}
+
 function dateValidation(req, res, next) {
   const { data = {} } = req.body
   let date = data.reservation_date + 'T' + data.reservation_time
@@ -87,6 +93,7 @@ function dateValidation(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
+  readTables: asyncErrorBoundary(readTables),
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,

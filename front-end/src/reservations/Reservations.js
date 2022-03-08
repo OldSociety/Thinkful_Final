@@ -151,10 +151,10 @@ const Reservations = () => {
         </div>
       </div>
 
-      <button type="button" onClick={handleCancel}>
+      <button className="m-1" type="button" onClick={handleCancel}>
         Cancel
       </button>
-      <button type="submit">Submit</button>
+      <button className="m-1" type="submit">Submit</button>
     </form>
   )
 }

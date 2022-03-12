@@ -8,7 +8,7 @@ exports.up = function (knex) {
          .references("reservation_id")
          .inTable("reservations")
          .onDelete("CASCADE")
-    table.boolean("status").defaultTo(false)
+    table.string("status")
     table.timestamps(true, true);
   });
 };

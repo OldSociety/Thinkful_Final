@@ -1,110 +1,143 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
-import { API_BASE_URL } from '../utils/api'
+import React, { useState, useEffect } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert";
+import { listReservations, seatTable } from "../utils/api";
 
-const Seat = () => {
-  const history = useHistory
-  const [status, setStatus] = useState(false)
-  const [fetchedData, updateFetchedData] = useState([])
+/**
+ * Allow user to choose table for reservation.
+ */
+export default function SeatReservation({ tables, loadDashboard }) {
+  const history = useHistory();
 
-  let api = `${API_BASE_URL}/tables`
+  const [table_id, setTableId] = useState(0);
+  const [reservations, setReservations] = useState([]);
+  const [reservationsError, setReservationsError] = useState(null);
+  const [errors, setErrors] = useState([]);
+  const [apiError, setApiError] = useState(null);
 
+  const { reservation_id } = useParams();
+
+  /**
+   * Shows all current reservations on first render
+   */
   useEffect(() => {
-    ;(async function () {
-      const abortController = new AbortController()
-      try {
-        let data = await fetch(api).then((res) => res.json())
-        updateFetchedData(data)
-      } catch (error) {
-        // setReservationsError(error)
+    const abortController = new AbortController();
+
+    setReservationsError(null);
+
+    listReservations(null, abortController.signal)
+      .then(setReservations)
+      .catch(setReservationsError);
+
+    return () => abortController.abort();
+  }, []);
+
+  if (!tables || !reservations) return null;
+
+  /**
+   * Update state when a user makes a change to the form.
+   */
+  function handleChange({ target }) {
+    setTableId(target.value);
+  }
+
+  /**
+   * Validate and make API call when a user submits the form.
+   */
+  function handleSubmit(event) {
+    event.preventDefault();
+    const abortController = new AbortController();
+
+    if (validateSeat()) {
+      seatTable(reservation_id, table_id, abortController.signal)
+        .then(loadDashboard)
+        .then(() => history.push(`/dashboard`))
+        .catch(setApiError);
+    }
+
+    return () => abortController.abort();
+  }
+
+  /**
+   * Validate table is available for reservation.
+   */
+  function validateSeat() {
+    const foundErrors = [];
+
+    const foundTable = tables.find(
+      (table) => table.table_id === Number(table_id)
+    );
+    const foundReservation = reservations.find(
+      (reservation) => reservation.reservation_id === Number(reservation_id)
+    );
+
+    if (!foundTable) {
+      foundErrors.push("The table you selected does not exist.");
+    } else if (!foundReservation) {
+      foundErrors.push("This reservation does not exist.");
+    } else {
+      if (foundTable.status === "occupied") {
+        foundErrors.push("The table you selected is currently occupied.");
       }
-      return () => abortController.abort()
-    })()
-  }, [api])
 
-  console.log('fetched Data', Object.values(fetchedData))
+      if (foundTable.capacity < foundReservation.people) {
+        foundErrors.push(
+          `The table you selected cannot seat ${foundReservation.people} people.`
+        );
+      }
+    }
 
-  const handleCancel = (event) => {
-    event.preventDefault()
+    setErrors(foundErrors);
 
-    console.log('Canceled')
-    history.goBack()
+    return foundErrors.length === 0;
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    console.log('submitted')
-  }
+  const tableOptionsJSX = () => {
+    return tables.map((table) => (
+      <option key={table.table_id} value={table.table_id}>
+        {table.table_name} - {table.capacity}
+      </option>
+    ));
+  };
 
-  const handleChange = () => {
-    setStatus(!status)
-  }
+  const errorsJSX = () => {
+    return errors.map((error, idx) => <ErrorAlert key={idx} error={error} />);
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Available Tables</h4>
-      </div>
-      {/* <ErrorAlert error={TablesError} /> */}
-      <div className="table-list">
-        <table>
-          <thead>
-            <tr>
-              <th>Table Number</th>
-              <th>Occupied</th>
-              <th>Type</th>
-              <th>Capacity</th>
-            </tr>
-          </thead>
-          <tbody>
-            <div className="container p-3">
-              <div className="row">
-                <label htmlFor="table_name">
-                  Table:
-                  <br />
-                  <select
-                    type="text"
-                    className="table_name"
-                    onChange={handleChange}
-                    value={fetchedData.status}
-                    required
-                  >
-                    <option value="1">Bar 1</option>
-                    <option value="2">Bar 2</option>
-                    <option value="3">Table 1</option>
-                    <option value="4">Table 2</option>
-                  </select>
-                </label>
-              </div>
+    <form className="form-select">
+      {errorsJSX()}
+      <ErrorAlert error={apiError} />
+      <ErrorAlert error={reservationsError} />
 
-              <br />
-              <div className="row">
-                <label htmlFor="capacity">
-                  Capacity:
-                  <br />
-                  <input
-                    type="text"
-                    className="capacity"
-                    onChange={handleChange}
-                    value={fetchedData.capacity}
-                    required
-                  />
-                </label>
-              </div>
+      <label className="form-label" htmlFor="table_id">
+        Choose table:
+      </label>
+      <select
+        className="form-control"
+        name="table_id"
+        id="table_id"
+        value={table_id}
+        onChange={handleChange}
+      >
+        <option value={0}>Choose a table</option>
+        {tableOptionsJSX()}
+      </select>
 
-              <br />
-            </div>
-          </tbody>
-        </table>
-        <button className="m-1" type="button" onClick={handleCancel}>
-          Cancel
-        </button>
-        <button className="m-1" type="submit">
-          Submit
-        </button>
-      </div>
+      <button
+        className="btn btn-primary m-1"
+        type="submit"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
+      <button
+        className="btn btn-danger m-1"
+        type="button"
+        onClick={history.goBack}
+      >
+        Cancel
+      </button>
     </form>
-  )
+  );
 }
-
-export default Seat

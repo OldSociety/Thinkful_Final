@@ -42,7 +42,7 @@ export default function ReservationRow({ reservation, loadDashboard }) {
         {reservation.status}
       </td>
 
-      {reservation.status === 'booked' && (
+      {(
         <>
           <td>
             <Link to={`/reservations/${reservation.reservation_id}/edit`}>

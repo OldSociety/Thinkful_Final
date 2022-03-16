@@ -1,23 +1,20 @@
 /**
  * List handler for reservation resources
  */
-const reservationService = require('./reservations.service')
+const service = require('./reservations.service')
 const asyncErrorBoundary = require('../errors/asyncErrorBoundary')
 const hasProperties = require('../errors/hasProperties')
 
 async function reservationExists(req, res, next) {
   const { reservation_id } = req.params
-  console.log(reservation_id)
-  const reservation = await reservationService.read(reservation_id)
-  console.log(reservation)
+  const reservation = await service.read(reservation_id)
   if (reservation) {
     res.locals.reservation = reservation
-    console.log('error here')
     return next()
   }
   return next({
     status: 404,
-    message: `Reservation cannot be found.`,
+    message: `Reservation ${reservation_id} cannot be found.`,
   })
 }
 
@@ -32,14 +29,15 @@ const hasRequiredProperties = hasProperties(
 )
 
 async function list(req, res, next) {
+  //list all reservations 
   const { date } = req.query
-  const data = await reservationService.list(date)
+  const data = await service.list(date)
   res.status(200).json({ data })
 }
 
 async function create(req, res) {
   const { data = {} } = req.body
-  await reservationService.create(data)
+  await service.create(data)
   res.status(201).json({ data })
 }
 
@@ -69,19 +67,38 @@ function hasOnlyValidProperties(req, res, next) {
       message: `Invalid field(s): ${invalidFields.join(', ')}`,
     })
   }
-  console.log(typeof data.people)
   next()
 }
 
-function dateValidation(req, res, next) {
+function peopleIsValidNumber(req, res, next) {
+  const { data = {} } = req.body
+  if (data.people <= 0 || !Number.isInteger(data.people)) {
+    return next({
+      status: 400,
+      message: `people must be an integer greater than 0`,
+    })
+  }
+}
+
+function timeDateValidation(req, res, next) {
   const { data = {} } = req.body
   let date = data.reservation_date + 'T' + data.reservation_time
   let time = data.reservation_time.replace(':', '')
   const d = new Date(date)
   const currentDate = new Date().getTime()
 
+  const date_regex = /\d{4}-\d{2}-\d{2}/g
+  const time_regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/
+
+  // date must be in value YYYY-MM-DD
+  if (!date_regex.test(data.reservation_date)) {
+    return next({
+      status: 400,
+      message: 'reservation_date must be a valid date',
+    })
+  }
   //cannot set before current date
-  if (d.getTime() <= currentDate) {
+  else if (d.getTime() <= currentDate) {
     return next({
       status: 400,
       message: `"future".`,
@@ -101,6 +118,12 @@ function dateValidation(req, res, next) {
       status: 400,
       message: `"closed".`,
     })
+    // time must be a valid time
+  } else if (!time_regex.test(data.reservation_time)) {
+    return next({
+      status: 400,
+      message: 'reservation_time must be a valid time',
+    })
   }
   next()
 }
@@ -111,7 +134,8 @@ module.exports = {
   create: [
     hasOnlyValidProperties,
     hasRequiredProperties,
-    dateValidation,
+    timeDateValidation,
+    peopleIsValidNumber,
     asyncErrorBoundary(create),
   ],
 }

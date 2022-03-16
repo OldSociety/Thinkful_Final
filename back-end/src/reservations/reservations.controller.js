@@ -91,6 +91,31 @@ function hasOnlyValidProperties(req, res, next) {
   next()
 }
 
+async function validateUpdateBody(req, res, next) {
+  if (!req.body.data.status) {
+    return next({ status: 400, message: 'body must include a status field' })
+  }
+  if (
+    req.body.data.status !== 'booked' &&
+    req.body.data.status !== 'seated' &&
+    req.body.data.status !== 'finished' &&
+    req.body.data.status !== 'cancelled'
+  ) {
+    return next({
+      status: 400,
+      message: `'status' field cannot be ${req.body.data.status}`,
+    })
+  }
+  if (res.locals.reservation.status === 'finished') {
+    return next({
+      status: 400,
+      message: `a finished reservation cannot be updated`,
+    })
+  }
+
+  next()
+}
+
 function peopleIsValidNumber(req, res, next) {
   const { data = {} } = req.body
   if (data.people <= 0 || !Number.isInteger(data.people)) {
@@ -160,7 +185,7 @@ async function update(req, res, next) {
       reservation_time,
       people,
     } = {},
-  } = req.body;
+  } = req.body
 
   const updatedReservation = {
     first_name,
@@ -171,28 +196,29 @@ async function update(req, res, next) {
     people,
     status: res.locals.reservation.status,
     reservation_id: res.locals.reservation.reservation_id,
-  };
+  }
 
-  const data = await service.update(updatedReservation);
+  const data = await service.update(updatedReservation)
 
-  res.json({ data });
+  res.json({ data })
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   create: [
-    hasOnlyValidProperties,
-    hasRequiredProperties,
-    timeDateValidation,
-    peopleIsValidNumber,
+    asyncErrorBoundary(hasOnlyValidProperties),
+    asyncErrorBoundary(hasRequiredProperties),
+    asyncErrorBoundary(timeDateValidation),
+    asyncErrorBoundary(peopleIsValidNumber),
     asyncErrorBoundary(create),
   ],
   update: [
-    hasOnlyValidProperties,
-    hasRequiredProperties,
-    timeDateValidation,
-    peopleIsValidNumber,
+    asyncErrorBoundary(hasOnlyValidProperties),
+    asyncErrorBoundary(hasRequiredProperties),
+    asyncErrorBoundary(timeDateValidation),
+    asyncErrorBoundary(peopleIsValidNumber),
+    asyncErrorBoundary(validateUpdateBody),
     asyncErrorBoundary(update),
   ],
 }

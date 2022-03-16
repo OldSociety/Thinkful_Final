@@ -29,15 +29,36 @@ const hasRequiredProperties = hasProperties(
 )
 
 async function list(req, res, next) {
-  //list all reservations 
+  //list all reservations
   const { date } = req.query
   const data = await service.list(date)
+  console.log(data)
   res.status(200).json({ data })
 }
 
 async function create(req, res) {
-  const { data = {} } = req.body
-  await service.create(data)
+  const {
+    data: {
+      first_name,
+      last_name,
+      mobile_number,
+      reservation_date,
+      reservation_time,
+      people,
+    } = {},
+  } = req.body
+
+  const newReservation = {
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
+    status: 'booked',
+  }
+
+  const data = await service.create(newReservation)
   res.status(201).json({ data })
 }
 
@@ -78,6 +99,7 @@ function peopleIsValidNumber(req, res, next) {
       message: `people must be an integer greater than 0`,
     })
   }
+  next()
 }
 
 function timeDateValidation(req, res, next) {
@@ -128,6 +150,34 @@ function timeDateValidation(req, res, next) {
   next()
 }
 
+async function update(req, res, next) {
+  const {
+    data: {
+      first_name,
+      last_name,
+      mobile_number,
+      reservation_date,
+      reservation_time,
+      people,
+    } = {},
+  } = req.body;
+
+  const updatedReservation = {
+    first_name,
+    last_name,
+    mobile_number,
+    reservation_date,
+    reservation_time,
+    people,
+    status: res.locals.reservation.status,
+    reservation_id: res.locals.reservation.reservation_id,
+  };
+
+  const data = await service.update(updatedReservation);
+
+  res.json({ data });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
@@ -137,5 +187,12 @@ module.exports = {
     timeDateValidation,
     peopleIsValidNumber,
     asyncErrorBoundary(create),
+  ],
+  update: [
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    timeDateValidation,
+    peopleIsValidNumber,
+    asyncErrorBoundary(update),
   ],
 }

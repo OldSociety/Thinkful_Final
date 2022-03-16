@@ -121,7 +121,7 @@ async function validateSeat(req, res, next) {
       message: `the table you selected does not have enough capacity to seat ${res.locals.reservation.people} people`,
     });
   }
-  res.status(201).json({ data: response[0] })
+
   next();
 }
 

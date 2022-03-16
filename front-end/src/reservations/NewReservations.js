@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ErrorAlert from '../layout/ErrorAlert'
-import { postReservation } from '../../src/utils/api'
+import { postReservation } from '../utils/api'
 
-const Reservations = () => {
+const NewReservations = () => {
   const initialFormState = {
     first_name: '',
     last_name: '',
@@ -151,12 +151,22 @@ const Reservations = () => {
         </div>
       </div>
 
-      <button className="m-1" type="button" onClick={handleCancel}>
+      <button
+        className="btn btn-danger m-1"
+        type="button"
+        onClick={handleCancel}
+      >
         Cancel
       </button>
-      <button className="m-1" type="submit">Submit</button>
+      <button
+        className="btn btn-primary m-1"
+        type="submit"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
     </form>
   )
 }
 
-export default Reservations
+export default NewReservations

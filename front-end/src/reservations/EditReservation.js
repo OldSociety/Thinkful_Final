@@ -37,11 +37,12 @@ export default function EditReservation() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const abortController = new AbortController();
-    editReservation(formData, formData.reservation_id, abortController.signal)
+    editReservation( formData.reservation_id, formData, abortController.signal)
       .then(() => history.push(`/dashboard?date=${formData.reservation_date}`))
       .catch(setReservationError);
     return () => abortController.abort();
   };
+  
   const handleChange = ({ target }) => {
     let value = target.value;
     if (target.name === "people") {

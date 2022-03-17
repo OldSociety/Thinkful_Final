@@ -79,12 +79,18 @@ export async function createReservation(reservation, signal) {
 
 export async function editReservation(reservation_id, reservation, signal) {
   const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+  console.log(reservation_id, reservation)
 
   const body = JSON.stringify({ data: reservation });
 
   return await fetchJson(url, { headers, signal, method: "PUT", body }, []);
 }
 
+export async function readReservation(reservation_id, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+
+  return await fetchJson(url, { headers, signal, method: "GET" }, []);
+}
 
 export async function updateReservationStatus(reservation_id, status, signal) {
   const url = `${API_BASE_URL}/reservations/${reservation_id}/status`;

@@ -6,6 +6,7 @@ import ReservationForm from './ReservationForm'
 
 
 export default function NewReservation ({date}) {
+    console.log("you are on this form")
    const history = useHistory();
    const initialFormState = {
        first_name: "",

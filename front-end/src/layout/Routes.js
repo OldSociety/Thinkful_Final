@@ -3,6 +3,7 @@ import { listReservations, listTables } from "../utils/api";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NewReservation from "../reservations/NewReservation";
+import EditReservation from "../reservations/EditReservation";
 import NotFound from "./NotFound";
 import useQuery from "../utils/useQuery";
 import NewTable from "../tables/NewTable";
@@ -63,7 +64,7 @@ function Routes() {
       </Route>
 
       <Route path="/reservations/:reservation_id/edit">
-        <NewReservation loadDashboard={loadDashboard} edit={true} />
+        <EditReservation loadDashboard={loadDashboard} edit={true} />
       </Route>
 
       <Route path="/reservations/:reservation_id/seat">

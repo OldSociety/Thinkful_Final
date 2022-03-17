@@ -218,7 +218,6 @@ async function edit(req, res) {
     res.locals.reservation.reservation_id,
     req.body.data
   );
-
   res.status(200).json({ data: response[0] });
 }
 

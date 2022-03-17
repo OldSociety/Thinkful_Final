@@ -50,8 +50,7 @@
   "author": "Thinkful, Inc.",
   "license": "UNLICENSED",
   "dependencies": {
-    "dotenv": "^16.0.0",
-    "knex": "^1.0.3",
-    "react-router-dom": "^6.2.2"
+    "cors": "^2.8.5",
+    "knex": "^1.0.3"
   }
 }

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { listReservations, listTables } from "../utils/api";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
-import NewReservation from "../reservations/NewReservations";
+import NewReservation from "../reservations/NewReservation";
 import NotFound from "./NotFound";
 import useQuery from "../utils/useQuery";
 import NewTable from "../tables/NewTable";
 import SeatReservation from "../reservations/SeatReservation";
-// import Search from "../search/Search";
+import Search from "../search/Search";
 import { today } from "../utils/date-time";
 
 /**
@@ -85,9 +85,9 @@ function Routes() {
         />
       </Route>
 
-      {/* <Route path="/search">
+      <Route path="/search">
         <Search />
-      </Route> */}
+      </Route>
 
       <Route>
         <NotFound />

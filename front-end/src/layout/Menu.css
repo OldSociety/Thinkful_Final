@@ -1,0 +1,27 @@
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 428px) {
+    .nav-option {
+        font-size: 10pt;
+        padding: 0px;
+    }
+
+    .navbar {
+        width: 100%;
+    }
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .nav-option {
+        font-size: 14pt;
+        padding: 0px;
+    }
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .nav-option {
+        font-size: 16pt;
+        padding: 0px;
+    }
+}

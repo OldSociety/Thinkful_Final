@@ -51,6 +51,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "cors": "^2.8.5",
+    "heroku": "^7.59.4",
     "knex": "^1.0.3"
   }
 }

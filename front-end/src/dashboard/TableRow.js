@@ -1,11 +1,11 @@
-import React from "react";
-import { finishTable } from "../utils/api";
+import React from 'react'
+import { finishTable } from '../utils/api'
 
 /**
  * This is reservation data for a <table>.
  */
 export default function TableRow({ table, loadDashboard }) {
-  if (!table) return null;
+  if (!table) return null
 
   /**
    * Called to finish a table
@@ -13,14 +13,14 @@ export default function TableRow({ table, loadDashboard }) {
   function handleFinish() {
     if (
       window.confirm(
-        "Is this table ready to seat new guests? This cannot be undone."
+        'Is this table ready to seat new guests? This cannot be undone.'
       )
     ) {
-      const abortController = new AbortController();
+      const abortController = new AbortController()
 
-      finishTable(table.table_id, abortController.signal).then(loadDashboard);
+      finishTable(table.table_id, abortController.signal).then(loadDashboard)
 
-      return () => abortController.abort();
+      return () => abortController.abort()
     }
   }
 
@@ -30,9 +30,9 @@ export default function TableRow({ table, loadDashboard }) {
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
       <td data-table-id-status={table.table_id}>{table.status}</td>
-      <td>{table.reservation_id ? table.reservation_id : "--"}</td>
+      <td>{table.reservation_id ? table.reservation_id : '--'}</td>
 
-      {table.status === "occupied" && (
+      {table.status === 'occupied' && (
         <td>
           <button
             data-table-id-finish={table.table_id}
@@ -44,5 +44,5 @@ export default function TableRow({ table, loadDashboard }) {
         </td>
       )}
     </tr>
-  );
+  )
 }

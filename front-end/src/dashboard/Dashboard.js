@@ -1,9 +1,9 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
-import { previous, next, today } from "../utils/date-time";
-import ErrorAlert from "../layout/ErrorAlert";
-import ReservationRow from "./ReservationRow";
-import TableRow from "./TableRow";
+import React from 'react'
+import { useHistory } from 'react-router-dom'
+import { previous, next, today } from '../utils/date-time'
+import ErrorAlert from '../layout/ErrorAlert'
+import ReservationRow from './ReservationRow'
+import TableRow from './TableRow'
 
 /**
  * Defines the dashboard page.
@@ -19,7 +19,7 @@ function Dashboard({
   tablesError,
   loadDashboard,
 }) {
-  const history = useHistory();
+  const history = useHistory()
 
   const reservationsJSX = () => {
     return reservations.map((reservation) => (
@@ -28,8 +28,8 @@ function Dashboard({
         reservation={reservation}
         loadDashboard={loadDashboard}
       />
-    ));
-  };
+    ))
+  }
 
   const tablesJSX = () => {
     return tables.map((table) => (
@@ -38,31 +38,31 @@ function Dashboard({
         table={table}
         loadDashboard={loadDashboard}
       />
-    ));
-  };
+    ))
+  }
 
   /**
    * Allows the user to navigate days on the calendar.
    */
   function handleClick({ target }) {
-    let newDate;
-    let useDate;
+    let newDate
+    let useDate
 
     if (!date) {
-      useDate = today();
+      useDate = today()
     } else {
-      useDate = date;
+      useDate = date
     }
 
-    if (target.name === "previous") {
-      newDate = previous(useDate);
-    } else if (target.name === "next") {
-      newDate = next(useDate);
+    if (target.name === 'previous') {
+      newDate = previous(useDate)
+    } else if (target.name === 'next') {
+      newDate = next(useDate)
     } else {
-      newDate = today();
+      newDate = today()
     }
 
-    history.push(`/dashboard?date=${newDate}`);
+    history.push(`/dashboard?date=${newDate}`)
   }
 
   return (
@@ -140,7 +140,7 @@ function Dashboard({
         <tbody>{tablesJSX()}</tbody>
       </table>
     </main>
-  );
+  )
 }
 
-export default Dashboard;
+export default Dashboard

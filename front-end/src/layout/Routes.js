@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { listReservations, listTables } from "../utils/api";
-import { Redirect, Route, Switch } from "react-router-dom";
-import Dashboard from "../dashboard/Dashboard";
-import NewReservation from "../reservations/NewReservation";
-import EditReservation from "../reservations/EditReservation";
-import NotFound from "./NotFound";
-import useQuery from "../utils/useQuery";
-import NewTable from "../tables/NewTable";
-import SeatReservation from "../reservations/SeatReservation";
-import Search from "../search/Search";
-import { today } from "../utils/date-time";
+import React, { useState, useEffect } from 'react'
+import { listReservations, listTables } from '../utils/api'
+import { Redirect, Route, Switch } from 'react-router-dom'
+import Dashboard from '../dashboard/Dashboard'
+import NewReservation from '../reservations/NewReservation'
+import EditReservation from '../reservations/EditReservation'
+import NotFound from './NotFound'
+import useQuery from '../utils/useQuery'
+import NewTable from '../tables/NewTable'
+import SeatReservation from '../reservations/SeatReservation'
+import Search from '../search/Search'
+import { today } from '../utils/date-time'
 
 /**
  * Defines all the routes for the application.
  */
 function Routes() {
-  const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
+  const [reservations, setReservations] = useState([])
+  const [reservationsError, setReservationsError] = useState(null)
 
-  const [tables, setTables] = useState([]);
-  const [tablesError, setTablesError] = useState(null);
+  const [tables, setTables] = useState([])
+  const [tablesError, setTablesError] = useState(null)
 
-  const query = useQuery();
-  const date = query.get("date") ? query.get("date") : today();
+  const query = useQuery()
+  const date = query.get('date') ? query.get('date') : today()
 
-  useEffect(loadDashboard, [date]);
+  useEffect(loadDashboard, [date])
 
   /**
    * retrieves all current reservation and table data.
    */
   function loadDashboard() {
-    const abortController = new AbortController();
+    const abortController = new AbortController()
 
-    setReservationsError(null);
-    setTablesError(null);
+    setReservationsError(null)
+    setTablesError(null)
 
     listReservations({ date: date }, abortController.signal)
       .then(setReservations)
-      .catch(setReservationsError);
+      .catch(setReservationsError)
 
     listTables(abortController.signal)
       .then((tables) =>
         tables.sort((tableA, tableB) => tableA.table_id - tableB.table_id)
       )
       .then(setTables)
-      .catch(setTablesError);
+      .catch(setTablesError)
 
-    return () => abortController.abort();
+    return () => abortController.abort()
   }
 
   return (
@@ -94,7 +94,7 @@ function Routes() {
         <NotFound />
       </Route>
     </Switch>
-  );
+  )
 }
 
-export default Routes;
+export default Routes

@@ -1,38 +1,38 @@
-import React, { useState } from "react";
-import ErrorAlert from "../layout/ErrorAlert";
-import { listReservations } from "../utils/api";
-import ReservationRow from "../dashboard/ReservationRow";
+import React, { useState } from 'react'
+import ErrorAlert from '../layout/ErrorAlert'
+import { listReservations } from '../utils/api'
+import ReservationRow from '../dashboard/ReservationRow'
 
 /**
  * Can search reservations by mobileNumber.
  */
 export default function Search() {
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [reservations, setReservations] = useState([]);
-  const [error, setError] = useState(null);
+  const [mobileNumber, setMobileNumber] = useState('')
+  const [reservations, setReservations] = useState([])
+  const [error, setError] = useState(null)
 
   /**
    * Update state when change is made to the form.
    */
   function handleChange({ target }) {
-    setMobileNumber(target.value);
+    setMobileNumber(target.value)
   }
 
   /**
    * Validate and make API call when form is submitted.
    */
   function handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    const abortController = new AbortController();
+    const abortController = new AbortController()
 
-    setError(null);
+    setError(null)
 
     listReservations({ mobile_number: mobileNumber }, abortController.signal)
       .then(setReservations)
-      .catch(setError);
+      .catch(setError)
 
-    return () => abortController.abort();
+    return () => abortController.abort()
   }
 
   const searchResultsJSX = () => {
@@ -47,8 +47,8 @@ export default function Search() {
       <tr>
         <td>No reservations found</td>
       </tr>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -97,5 +97,5 @@ export default function Search() {
         <tbody>{searchResultsJSX()}</tbody>
       </table>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { updateReservationStatus } from "../utils/api";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { updateReservationStatus } from '../utils/api'
 
 export default function Reservation({
   res,
@@ -8,33 +8,33 @@ export default function Reservation({
   setReservationError,
 }) {
   const handleCancel = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     const confirm = window.confirm(
-      "Do you want to cancel this reservation? This cannot be undone."
-    );
+      'Do you want to cancel this reservation? This cannot be undone.'
+    )
     if (confirm) {
-      cancelHandler(res.reservation_id);
+      cancelHandler(res.reservation_id)
     }
-  };
+  }
   function cancelHandler(reservation_id) {
-    const abortController = new AbortController();
+    const abortController = new AbortController()
 
-    updateReservationStatus(reservation_id, "cancelled", abortController.status)
+    updateReservationStatus(reservation_id, 'cancelled', abortController.status)
       .then(() => {
-        return loadDashboard();
+        return loadDashboard()
       })
-      .catch(setReservationError);
-    return () => abortController.abort();
+      .catch(setReservationError)
+    return () => abortController.abort()
   }
 
   function formatPhoneNumber(phoneNumberString) {
-    var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
-    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
     if (match) {
-      var intlCode = match[1] ? "+1 " : "";
-      return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
+      var intlCode = match[1] ? '+1 ' : ''
+      return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
     }
-    return null;
+    return null
   }
 
   return (
@@ -42,7 +42,7 @@ export default function Reservation({
       <div className="reservation">
         <div className="split">
           <div className="resName">
-            {res.first_name} {res.last_name}{" "}
+            {res.first_name} {res.last_name}{' '}
           </div>
           <div className="resSub">{formatPhoneNumber(res.mobile_number)}</div>
           <div className="resSub">Party of {res.people}</div>
@@ -59,7 +59,7 @@ export default function Reservation({
           </div>
 
           <div>
-            {res.status !== "seated" ? (
+            {res.status !== 'seated' ? (
               <Link
                 to={`/reservations/${res.reservation_id}/seat`}
                 className="button"
@@ -67,7 +67,7 @@ export default function Reservation({
                 Seat
               </Link>
             ) : (
-              ""
+              ''
             )}
             <br />
             <Link
@@ -88,5 +88,5 @@ export default function Reservation({
         </div>
       </div>
     </>
-  );
+  )
 }

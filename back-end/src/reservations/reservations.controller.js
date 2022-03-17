@@ -1,20 +1,20 @@
-const service = require("./reservations.service");
-const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const service = require('./reservations.service')
+const asyncErrorBoundary = require('../errors/asyncErrorBoundary')
 
 /**
  * List reservation handler.
  */
 async function list(req, res) {
-  const date = req.query.date;
-  const mobile_number = req.query.mobile_number;
+  const date = req.query.date
+  const mobile_number = req.query.mobile_number
 
-  const reservations = await service.list(date, mobile_number);
+  const reservations = await service.list(date, mobile_number)
 
   const response = reservations.filter(
-    (reservation) => reservation.status !== "finished"
-  );
+    (reservation) => reservation.status !== 'finished'
+  )
 
-  res.json({ data: response });
+  res.json({ data: response })
 }
 
 /**
@@ -22,10 +22,10 @@ async function list(req, res) {
  */
 async function validateData(req, res, next) {
   if (!req.body.data) {
-    return next({ status: 400, message: "Body must include a data object" });
+    return next({ status: 400, message: 'Body must include a data object' })
   }
 
-  next();
+  next()
 }
 
 /**
@@ -33,17 +33,17 @@ async function validateData(req, res, next) {
  */
 async function validateBody(req, res, next) {
   const requiredFields = [
-    "first_name",
-    "last_name",
-    "mobile_number",
-    "reservation_date",
-    "reservation_time",
-    "people",
-  ];
+    'first_name',
+    'last_name',
+    'mobile_number',
+    'reservation_date',
+    'reservation_time',
+    'people',
+  ]
 
   for (const field of requiredFields) {
-    if (!req.body.data.hasOwnProperty(field) || req.body.data[field] === "") {
-      return next({ status: 400, message: `Field required: '${field}'` });
+    if (!req.body.data.hasOwnProperty(field) || req.body.data[field] === '') {
+      return next({ status: 400, message: `Field required: '${field}'` })
     }
   }
 
@@ -58,25 +58,25 @@ async function validateBody(req, res, next) {
       status: 400,
       message:
         "'reservation_date' or 'reservation_time' field is in an incorrect format",
-    });
+    })
   }
 
-  if (typeof req.body.data.people !== "number") {
-    return next({ status: 400, message: "'people' field must be a number" });
+  if (typeof req.body.data.people !== 'number') {
+    return next({ status: 400, message: "'people' field must be a number" })
   }
 
   if (req.body.data.people < 1) {
-    return next({ status: 400, message: "'people' field must be at least 1" });
+    return next({ status: 400, message: "'people' field must be at least 1" })
   }
 
-  if (req.body.data.status && req.body.data.status !== "booked") {
+  if (req.body.data.status && req.body.data.status !== 'booked') {
     return next({
       status: 400,
       message: `'status' field cannot be ${req.body.data.status}`,
-    });
+    })
   }
 
-  next();
+  next()
 }
 
 /**
@@ -85,14 +85,14 @@ async function validateBody(req, res, next) {
 async function validateDate(req, res, next) {
   const reserveDate = new Date(
     `${req.body.data.reservation_date}T${req.body.data.reservation_time}:00.000`
-  );
-  const todaysDate = new Date();
+  )
+  const todaysDate = new Date()
 
   if (reserveDate.getDay() === 2) {
     return next({
       status: 400,
       message: "'reservation_date' field: restauraunt is closed on tuesday",
-    });
+    })
   }
 
   if (reserveDate < todaysDate) {
@@ -100,7 +100,7 @@ async function validateDate(req, res, next) {
       status: 400,
       message:
         "'reservation_date' and 'reservation_time' field must be in the future",
-    });
+    })
   }
 
   if (
@@ -110,7 +110,7 @@ async function validateDate(req, res, next) {
     return next({
       status: 400,
       message: "'reservation_time' field: restaurant is not open until 10:30AM",
-    });
+    })
   }
 
   if (
@@ -120,7 +120,7 @@ async function validateDate(req, res, next) {
     return next({
       status: 400,
       message: "'reservation_time' field: restaurant is closed after 10:30PM",
-    });
+    })
   }
 
   if (
@@ -131,40 +131,40 @@ async function validateDate(req, res, next) {
       status: 400,
       message:
         "'reservation_time' field: reservation must be made at least an hour before closing (10:30PM)",
-    });
+    })
   }
 
-  next();
+  next()
 }
 
 /**
  * Create a reservation.
  */
 async function create(req, res) {
-  req.body.data.status = "booked";
+  req.body.data.status = 'booked'
 
-  const response = await service.create(req.body.data);
+  const response = await service.create(req.body.data)
 
-  res.status(201).json({ data: response[0] });
+  res.status(201).json({ data: response[0] })
 }
 
 /**
  * Validates, finds, and stores a reservation based off of its ID.
  */
 async function validateReservationId(req, res, next) {
-  const { reservation_id } = req.params;
-  const reservation = await service.read(Number(reservation_id));
+  const { reservation_id } = req.params
+  const reservation = await service.read(Number(reservation_id))
 
   if (!reservation) {
     return next({
       status: 404,
       message: `reservation id ${reservation_id} does not exist`,
-    });
+    })
   }
 
-  res.locals.reservation = reservation;
+  res.locals.reservation = reservation
 
-  next();
+  next()
 }
 
 /**
@@ -173,29 +173,29 @@ async function validateReservationId(req, res, next) {
  */
 async function validateUpdateBody(req, res, next) {
   if (!req.body.data.status) {
-    return next({ status: 400, message: "body must include a status field" });
+    return next({ status: 400, message: 'body must include a status field' })
   }
 
   if (
-    req.body.data.status !== "booked" &&
-    req.body.data.status !== "seated" &&
-    req.body.data.status !== "finished" &&
-    req.body.data.status !== "cancelled"
+    req.body.data.status !== 'booked' &&
+    req.body.data.status !== 'seated' &&
+    req.body.data.status !== 'finished' &&
+    req.body.data.status !== 'cancelled'
   ) {
     return next({
       status: 400,
       message: `'status' field cannot be ${req.body.data.status}`,
-    });
+    })
   }
 
-  if (res.locals.reservation.status === "finished") {
+  if (res.locals.reservation.status === 'finished') {
     return next({
       status: 400,
       message: `a finished reservation cannot be updated`,
-    });
+    })
   }
 
-  next();
+  next()
 }
 
 /**
@@ -205,9 +205,9 @@ async function update(req, res) {
   await service.update(
     res.locals.reservation.reservation_id,
     req.body.data.status
-  );
+  )
 
-  res.status(200).json({ data: { status: req.body.data.status } });
+  res.status(200).json({ data: { status: req.body.data.status } })
 }
 
 /**
@@ -217,15 +217,15 @@ async function edit(req, res) {
   const response = await service.edit(
     res.locals.reservation.reservation_id,
     req.body.data
-  );
-  res.status(200).json({ data: response[0] });
+  )
+  res.status(200).json({ data: response[0] })
 }
 
 /**
  * Respond with a particular reservation.
  */
 async function read(req, res) {
-  res.status(200).json({ data: res.locals.reservation });
+  res.status(200).json({ data: res.locals.reservation })
 }
 
 module.exports = {
@@ -250,4 +250,4 @@ module.exports = {
     asyncErrorBoundary(edit),
   ],
   read: [asyncErrorBoundary(validateReservationId), asyncErrorBoundary(read)],
-};
+}

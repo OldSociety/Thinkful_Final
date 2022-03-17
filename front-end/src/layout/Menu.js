@@ -1,6 +1,6 @@
-import React from "react";
-import "./Menu.css";
-import { Link } from "react-router-dom";
+import React from 'react'
+import './Menu.css'
+import { Link } from 'react-router-dom'
 
 /**
  * Defines the menu for this application.
@@ -56,7 +56,7 @@ function Menu() {
         </div>
       </div>
     </nav>
-  );
+  )
 }
 
-export default Menu;
+export default Menu

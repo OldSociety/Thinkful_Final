@@ -3,15 +3,16 @@
  * The default values is overridden by the `API_BASE_URL` environment variable.
  */
 
- const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'
 
 //  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 /**
  * Defines the default headers for these functions to work with `json-server`
  */
-const headers = new Headers();
-headers.append("Content-Type", "application/json");
+const headers = new Headers()
+headers.append('Content-Type', 'application/json')
 
 /**
  * Fetch `json` from the specified URL and handle error status codes and ignore `AbortError`s
@@ -30,24 +31,24 @@ headers.append("Content-Type", "application/json");
  */
 async function fetchJson(url, options, onCancel) {
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(url, options)
 
     if (response.status === 204) {
-      return null;
+      return null
     }
 
-    const payload = await response.json();
+    const payload = await response.json()
 
     if (payload.error) {
-      return Promise.reject({ message: payload.error });
+      return Promise.reject({ message: payload.error })
     }
-    return payload.data;
+    return payload.data
   } catch (error) {
-    if (error.name !== "AbortError") {
-      console.error(error.stack);
-      throw error;
+    if (error.name !== 'AbortError') {
+      console.error(error.stack)
+      throw error
     }
-    return Promise.resolve(onCancel);
+    return Promise.resolve(onCancel)
   }
 }
 
@@ -58,78 +59,72 @@ async function fetchJson(url, options, onCancel) {
  */
 
 export async function listReservations(params, signal) {
-  const url = new URL(`${API_BASE_URL}/reservations`);
+  const url = new URL(`${API_BASE_URL}/reservations`)
 
   if (params) {
     Object.entries(params).forEach(([key, value]) =>
       url.searchParams.append(key, value.toString())
-    );
+    )
   }
 
-  return await fetchJson(url, { headers, signal, method: "GET" }, []);
+  return await fetchJson(url, { headers, signal, method: 'GET' }, [])
 }
-
 
 export async function createReservation(reservation, signal) {
-  const url = `${API_BASE_URL}/reservations`;
+  const url = `${API_BASE_URL}/reservations`
 
-  const body = JSON.stringify({ data: reservation });
+  const body = JSON.stringify({ data: reservation })
 
-  return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+  return await fetchJson(url, { headers, signal, method: 'POST', body }, [])
 }
 
-
 export async function editReservation(reservation_id, reservation, signal) {
-  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+  const url = `${API_BASE_URL}/reservations/${reservation_id}`
   console.log(reservation_id, reservation)
 
-  const body = JSON.stringify({ data: reservation });
+  const body = JSON.stringify({ data: reservation })
 
-  return await fetchJson(url, { headers, signal, method: "PUT", body }, []);
+  return await fetchJson(url, { headers, signal, method: 'PUT', body }, [])
 }
 
 export async function readReservation(reservation_id, signal) {
-  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+  const url = `${API_BASE_URL}/reservations/${reservation_id}`
 
-  return await fetchJson(url, { headers, signal, method: "GET" }, []);
+  return await fetchJson(url, { headers, signal, method: 'GET' }, [])
 }
 
 export async function updateReservationStatus(reservation_id, status, signal) {
-  const url = `${API_BASE_URL}/reservations/${reservation_id}/status`;
+  const url = `${API_BASE_URL}/reservations/${reservation_id}/status`
 
-  const body = JSON.stringify({ data: { status: status } });
+  const body = JSON.stringify({ data: { status: status } })
 
-  return await fetchJson(url, { headers, signal, method: "PUT", body }, []);
+  return await fetchJson(url, { headers, signal, method: 'PUT', body }, [])
 }
-
 
 export async function listTables(signal) {
-  const url = `${API_BASE_URL}/tables`;
+  const url = `${API_BASE_URL}/tables`
 
-  return await fetchJson(url, { headers, signal, method: "GET" }, []);
+  return await fetchJson(url, { headers, signal, method: 'GET' }, [])
 }
-
 
 export async function createTable(table, signal) {
-  const url = `${API_BASE_URL}/tables`;
+  const url = `${API_BASE_URL}/tables`
 
-  const body = JSON.stringify({ data: table });
+  const body = JSON.stringify({ data: table })
 
-  return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+  return await fetchJson(url, { headers, signal, method: 'POST', body }, [])
 }
-
 
 export async function seatTable(reservation_id, table_id, signal) {
-  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
+  const url = `${API_BASE_URL}/tables/${table_id}/seat`
 
-  const body = JSON.stringify({ data: { reservation_id: reservation_id } });
+  const body = JSON.stringify({ data: { reservation_id: reservation_id } })
 
-  return await fetchJson(url, { headers, signal, method: "PUT", body }, []);
+  return await fetchJson(url, { headers, signal, method: 'PUT', body }, [])
 }
 
-
 export async function finishTable(table_id, signal) {
-  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
+  const url = `${API_BASE_URL}/tables/${table_id}/seat`
 
-  return await fetchJson(url, { headers, signal, method: "DELETE" }, []);
+  return await fetchJson(url, { headers, signal, method: 'DELETE' }, [])
 }

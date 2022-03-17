@@ -36,7 +36,7 @@ export default function NewReservation ({date}) {
 
    const handleSubmit = (event) => {
     event.preventDefault();
-    createReservation(formData).then(response => {
+    createReservation(formData).then(() => {
                     history.push(`/dashboard?date=${formData.reservation_date}`)
                 }).catch((error)=>{
                     setReservationsError(error)});

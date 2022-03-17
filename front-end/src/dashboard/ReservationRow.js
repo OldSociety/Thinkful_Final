@@ -1,12 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { updateReservationStatus } from "../utils/api";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { updateReservationStatus } from '../utils/api'
 
 /**
  * This is reservation data for a <table>.
  */
 export default function ReservationRow({ reservation, loadDashboard }) {
-  if (!reservation || reservation.status === "finished") return null;
+  if (!reservation || reservation.status === 'finished') return null
 
   /**
    * This function is used to cancel a reservation.
@@ -14,18 +14,18 @@ export default function ReservationRow({ reservation, loadDashboard }) {
   function handleCancel() {
     if (
       window.confirm(
-        "Do you want to cancel this reservation? This cannot be undone."
+        'Do you want to cancel this reservation? This cannot be undone.'
       )
     ) {
-      const abortController = new AbortController();
+      const abortController = new AbortController()
 
       updateReservationStatus(
         reservation.reservation_id,
-        "cancelled",
+        'cancelled',
         abortController.status
-      ).then(loadDashboard);
+      ).then(loadDashboard)
 
-      return () => abortController.abort();
+      return () => abortController.abort()
     }
   }
 
@@ -42,7 +42,7 @@ export default function ReservationRow({ reservation, loadDashboard }) {
         {reservation.status}
       </td>
 
-      {reservation.status === "booked" && (
+      {reservation.status === 'booked' && (
         <>
           <td>
             <Link to={`/reservations/${reservation.reservation_id}/edit`}>
@@ -73,5 +73,5 @@ export default function ReservationRow({ reservation, loadDashboard }) {
         </>
       )}
     </tr>
-  );
+  )
 }

@@ -26,14 +26,14 @@ Users can also create tables and assign capacity to reflect the tables in the re
 ## Installation Instructions
 
 ### Frontend
-- `cd` into `Thinkful-Final-Capstone/front-end`
+- `cd` into `Thinkful/front-end`
   - run `npm install`
   - run `npm start` to start the application
 
 ### Backend
-- `cd` into `Thinkful-Final-Capstone/back-end`
+- `cd` into `Thinkful/back-end`
   - run `npm install`
-  - run `knex migrate:latest` and `knex seed:run`
+  - run `npm run reset` to rollback, migrate and seed the database
   - run `npm start` to start the application
 
 <br>

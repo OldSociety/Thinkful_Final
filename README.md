@@ -1,7 +1,7 @@
 # Capstone: Restaurant Reservation System
 
 ## Live application URL
-`https://starter-restaurant-reservation-front-end-rho.vercel.app/dashboard`
+`https://restaurant-reserves-client.herokuapp.com/dashboard`
 
 ## Technology Used
 ### Frontend
@@ -43,7 +43,7 @@ Users can also create tables and assign capacity to reflect the tables in the re
 ## Creating A Reservation
 Creating a reservations is done by clicking 'New Reservation' on the navigation bar. This requires the customer's first name, last name, reservation date, reservation time, quantity of guests, and phone number.
 
-![newReservation](https://github.com/SamuelJSherman/starter-restaurant-reservation/blob/main/images/newres.png)
+![newReservation](https://github.com/oldSociety/starter-restaurant-reservation/blob/main/images/newres.png)
 
 
 ## Managing Reservations
@@ -53,17 +53,17 @@ The dashboard by default will list the reservations for today. Use the previous 
 
 The tables and their availability are listed in the list on the on the far right of the page.
 
-![dashboard](https://github.com/SamuelJSherman/starter-restaurant-reservation/blob/main/images/dashboard.png)
+![dashboard](https://github.com/oldSociety/starter-restaurant-reservation/blob/main/images/dashboard.png)
 
 ## Searching for a Specific Reservation
 Users can search for a particular reservation by the mobile number associated with the reservation. This can be done by clicking the 'Search' option in the left-hand navigation.
 
-![searchByMobile](https://github.com/SamuelJSherman/starter-restaurant-reservation/blob/main/images/search.png)
+![searchByMobile](https://github.com/oldSociety/starter-restaurant-reservation/blob/main/images/search.png)
 
 ## Managing Tables
 Expanding the restaurant? Create new tables by selecting the 'New Table' option in the left-hand navigation.
 
-![newTable](https://github.com/SamuelJSherman/starter-restaurant-reservation/blob/main/images/tableres.png)
+![newTable](https://github.com/oldSociety/starter-restaurant-reservation/blob/main/images/tableres.png)
 
 
 # API
